@@ -20,6 +20,7 @@ import { LocalModuleScope } from '@angular/compiler-cli/src/ngtsc/scope';
 import { ComponentSymbol } from './component.symbol';
 import { DirectiveSymbol } from './directive.symbol';
 import { WorkspaceSymbols } from './workspace.symbols';
+import {AST} from '@angular/compiler/src/expression_parser/ast';
 
 export interface TemplateNode {
   component: ComponentSymbol | null;
@@ -30,6 +31,8 @@ export interface TemplateNode {
   variables: string[];
   references: string[];
 }
+
+type Attribute = { name: string, value: string|AST };
 
 export class TransformTemplateVisitor implements TmplAstRecursiveVisitor {
   private _matcher = new SelectorMatcher();
@@ -81,12 +84,12 @@ export class TransformTemplateVisitor implements TmplAstRecursiveVisitor {
     return reference.name;
   }
 
-  visitTextAttribute(attribute: TmplAstTextAttribute): string {
-    return attribute.name;
+  visitTextAttribute(attribute: TmplAstTextAttribute): Attribute {
+    return { name: attribute.name, value: attribute.value };
   }
 
-  visitBoundAttribute(attribute: TmplAstBoundAttribute): string {
-    return attribute.name;
+  visitBoundAttribute(attribute: TmplAstBoundAttribute): Attribute {
+    return { name: attribute.name, value: attribute.value };
   }
 
   visitBoundEvent(attribute: TmplAstBoundEvent): string {
